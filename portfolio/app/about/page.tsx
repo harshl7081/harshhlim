@@ -117,7 +117,7 @@ export default function AboutPage() {
           transition={{ delay: 0.4 }}
         >
           <p>
-            Hello! I'm <span className="animated-gradient-text">Harsh Limbasiya</span>, a passionate developer with a love for creating beautiful and functional web experiences.
+            Hello! I&apos;m <span className="animated-gradient-text">Harsh Limbasiya</span>, a passionate developer with a love for creating beautiful and functional web experiences.
           </p>
           <p>
             I specialize in modern web technologies and believe in crafting interfaces that are both aesthetically pleasing and highly performant.

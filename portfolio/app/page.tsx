@@ -181,7 +181,7 @@ export default function Pageeeee() {
             transition={{ duration: 0.5, staggerChildren: 0.1 }}
             style={{ display: 'inline-block' }}
           >
-            {["H", "a", "r", "s", "h", " ", "L", "i", "m", "b", "a", "s", "i", "y", "a"].map((letter, index) => (
+            {["H", "a", "r", "s", "h", " ", "L", "i", "m", "b", "a", "s", "i", "y", "a"].map((letter, /* eslint-disable-next-line @typescript-eslint/no-unused-vars */ index) => (
               <motion.span
                 key={index}
                 ref={el => {

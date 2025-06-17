@@ -2,12 +2,41 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 0, 0, 0;
+  --background-end-rgb: 0, 0, 0;
+}
+
 html, body {
   height: 100%;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   scroll-behavior: smooth;
-  background: transparent;
+  background: rgb(var(--background-start-rgb));
+  color: rgb(var(--foreground-rgb));
   font-family: 'Inter', 'Sora', 'Space Grotesk', 'sans-serif';
 } 
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animated-gradient-text {
+  background: linear-gradient(120deg, #00c6fb, #a21caf, #f94892) !important;
+  background-size: 200% auto !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  color: transparent !important; /* Changed from green to transparent for gradient effect */
+  -webkit-text-fill-color: transparent !important;
+  animation: gradientMove 8s ease-in-out infinite !important;
+  display: inline-block !important;
+}
+
+html {
+  background: black;
+  color: white;
+}

@@ -2,6 +2,12 @@
   "name": "portfolio",
   "version": "0.1.0",
   "private": true,
+  "description": "Interactive portfolio website with animated name display",
+  "author": "Harsh Limbasiya",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/portfolio-website.git"
+  },
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",

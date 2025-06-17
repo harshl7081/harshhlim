@@ -181,12 +181,12 @@ export default function Pageeeee() {
             transition={{ duration: 0.5, staggerChildren: 0.1 }}
             style={{ display: 'inline-block' }}
           >
-            {["H", "a", "r", "s", "h", " ", "L", "i", "m", "b", "a", "s", "i", "y", "a"].map((letter, /* eslint-disable-next-line @typescript-eslint/no-unused-vars */ index) => (
+            {["H", "a", "r", "s", "h", " ", "L", "i", "m", "b", "a", "s", "i", "y", "a"].map((letter, _) => (
               <motion.span
-                key={index}
+                key={_}
                 ref={el => {
-                  if (el && letterRefs[index] !== el) {
-                    letterRefs[index] = el;
+                  if (el && letterRefs[_] !== el) {
+                    letterRefs[_] = el;
                     setLetterRefs([...letterRefs]);
                   }
                 }}

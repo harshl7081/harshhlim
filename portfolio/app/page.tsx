@@ -1,113 +1,96 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 
-export default function Page() {  // Fixed the component name from Pageeeee to Page
+export default function Page() {
   const router = useRouter();
-  const [isLoaded, setIsLoaded] = useState(false);
   const [mouse, setMouse] = useState({ x: 0.5, y: 0.5 });
   const [letterRefs, setLetterRefs] = useState<(HTMLSpanElement | null)[]>(Array(15).fill(null));
   const [isNavigating, setIsNavigating] = useState(false);
 
-  // Safely handle component mount
-  useEffect(() => {
-    try {
-      document.body.style.opacity = '1';
-      setIsLoaded(true);
-    } catch (error) {
-      console.error('Error during mount:', error);
+  // Create a stable ref callback using useCallback
+  const setLetterRef = useCallback((index: number) => (el: HTMLSpanElement | null) => {
+    if (el && letterRefs[index] !== el) {
+      // Update only the specific index
+      setLetterRefs(prev => {
+        const newRefs = [...prev];
+        newRefs[index] = el;
+        return newRefs;
+      });
     }
+  }, []); // Empty dependency array since we don't need to recreate this function
+
+  useEffect(() => {
+    document.body.style.opacity = '1';
   }, []);
 
   // Parallax handler with error boundary
   function handleMouseMove(e: React.MouseEvent) {
-    try {
-      const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
-      const x = (e.clientX - left) / width;
-      const y = (e.clientY - top) / height;
-      setMouse({ x, y });
+    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+    const x = (e.clientX - left) / width;
+    const y = (e.clientY - top) / height;
+    setMouse({ x, y });
 
-      requestAnimationFrame(() => {
-        letterRefs.forEach((letterRef, index) => {
-          if (!letterRef) return;
+    requestAnimationFrame(() => {
+      letterRefs.forEach((letterRef, index) => {
+        if (letterRef) {
+          const rect = letterRef.getBoundingClientRect();
+          const letterCenterX = rect.left + rect.width / 2;
+          const letterCenterY = rect.top + rect.height / 2;
+          const distance = Math.sqrt(
+            Math.pow(e.clientX - letterCenterX, 2) + 
+            Math.pow(e.clientY - letterCenterY, 2)
+          );
+          const maxDistance = 150;
+          const intensity = Math.max(0, 1 - distance / maxDistance);
           
-          try {
-            const rect = letterRef.getBoundingClientRect();
-            const letterCenterX = rect.left + rect.width / 2;
-            const letterCenterY = rect.top + rect.height / 2;
-            const distance = Math.sqrt(
-              Math.pow(e.clientX - letterCenterX, 2) + 
-              Math.pow(e.clientY - letterCenterY, 2)
-            );
-            const maxDistance = 150;
-            const intensity = Math.max(0, 1 - distance / maxDistance);
+          if (distance < maxDistance) {
+            const baseColor = '#00c6fb';
+            const glowColor1 = '#f94892';
+            const glowColor2 = '#a21caf';
             
-            if (distance < maxDistance) {
-              const baseColor = '#00c6fb';
-              const glowColor1 = '#f94892';
-              const glowColor2 = '#a21caf';
-              
-              letterRef.style.color = baseColor;
-              letterRef.style.textShadow = `
-                0 0 4px #fff,
-                0 0 8px #fff,
-                0 0 12px ${baseColor},
-                0 0 20px ${baseColor},
-                0 0 32px ${glowColor1},
-                0 0 48px ${glowColor2}
-              `;
-              letterRef.style.transform = `scale(${1 + intensity * 0.4}) rotate(${intensity * 10}deg)`;
-              letterRef.style.filter = `brightness(${1 + intensity * 1.5})`;
-              letterRef.style.zIndex = '10';
-            } else {
-              letterRef.style.color = '#fff';
-              letterRef.style.textShadow = '0 4px 12px rgba(0,0,0,0.5)';
-              letterRef.style.transform = 'scale(1) rotate(0deg)';
-              letterRef.style.filter = 'none';
-              letterRef.style.zIndex = '1';
-            }
-          } catch (error) {
-            console.error('Error updating letter styles:', error);
+            letterRef.style.color = baseColor;
+            letterRef.style.textShadow = `
+              0 0 4px #fff,
+              0 0 8px #fff,
+              0 0 12px ${baseColor},
+              0 0 20px ${baseColor},
+              0 0 32px ${glowColor1},
+              0 0 48px ${glowColor2}
+            `;
+            letterRef.style.transform = `scale(${1 + intensity * 0.4}) rotate(${intensity * 10}deg)`;
+            letterRef.style.filter = `brightness(${1 + intensity * 1.5})`;
+            letterRef.style.zIndex = '10';
+          } else {
+            letterRef.style.color = '#fff';
+            letterRef.style.textShadow = '0 4px 12px rgba(0,0,0,0.5)';
+            letterRef.style.transform = 'scale(1) rotate(0deg)';
+            letterRef.style.filter = 'none';
+            letterRef.style.zIndex = '1';
           }
-        });
+        }
       });
-    } catch (error) {
-      console.error('Error in mouse move handler:', error);
-    }
+    });
   }
 
-  const float = (dx: number, dy: number, rot: number = 15) => {
-    try {
-      return `translate3d(${(mouse.x - 0.5) * dx}px, ${(mouse.y - 0.5) * dy}px, 0) 
-              rotateX(${(mouse.y - 0.5) * rot}deg) rotateY(${(mouse.x - 0.5) * rot}deg)`;
-    } catch (error) {
-      console.error('Error in float calculation:', error);
-      return 'none';
-    }
-  };
+  const float = (dx: number, dy: number, rot: number = 15) => 
+    `translate3d(${(mouse.x - 0.5) * dx}px, ${(mouse.y - 0.5) * dy}px, 0) 
+     rotateX(${(mouse.y - 0.5) * rot}deg) rotateY(${(mouse.x - 0.5) * rot}deg)`;
 
   const handleLetterClick = () => {
     if (isNavigating) return;
-    try {
-      setIsNavigating(true);
-      document.body.style.opacity = '0';
-      document.body.style.transition = 'opacity 0.5s ease-out';
-      
-      setTimeout(() => {
-        router.push('/about');
-      }, 500);
-    } catch (error) {
-      console.error('Error during navigation:', error);
-      setIsNavigating(false);
-    }
+    setIsNavigating(true);
+    
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.5s ease-out';
+    
+    setTimeout(() => {
+      router.push('/about');
+    }, 500);
   };
-
-  if (!isLoaded) {
-    return null; // Return null during initial load to prevent hydration issues
-  }
 
   return (
     <main
@@ -208,16 +191,10 @@ export default function Page() {  // Fixed the component name from Pageeeee to P
             transition={{ duration: 0.5, staggerChildren: 0.1 }}
             style={{ display: 'inline-block' }}
           >
-            {["H", "a", "r", "s", "h", " ", "L", "i", "m", "b", "a", "s", "i", "y", "a"].map((letter) => (
+            {["H", "a", "r", "s", "h", " ", "L", "i", "m", "b", "a", "s", "i", "y", "a"].map((letter, i) => (
               <motion.span
-                key={`${letter}-${Math.random()}`}
-                ref={el => {
-                  const i = ["H", "a", "r", "s", "h", " ", "L", "i", "m", "b", "a", "s", "i", "y", "a"].indexOf(letter);
-                  if (el && letterRefs[i] !== el) {
-                    letterRefs[i] = el;
-                    setLetterRefs([...letterRefs]);
-                  }
-                }}
+                key={i}
+                ref={setLetterRef(i)}
                 style={{ 
                   display: 'inline-block',
                   transition: 'all 0.3s cubic-bezier(.4,0,.2,1)',

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -181,12 +182,13 @@ export default function Pageeeee() {
             transition={{ duration: 0.5, staggerChildren: 0.1 }}
             style={{ display: 'inline-block' }}
           >
-            {["H", "a", "r", "s", "h", " ", "L", "i", "m", "b", "a", "s", "i", "y", "a"].map((letter, _) => (
+            {["H", "a", "r", "s", "h", " ", "L", "i", "m", "b", "a", "s", "i", "y", "a"].map((letter) => (
               <motion.span
-                key={_}
+                key={`${letter}-${Math.random()}`}
                 ref={el => {
-                  if (el && letterRefs[_] !== el) {
-                    letterRefs[_] = el;
+                  const i = ["H", "a", "r", "s", "h", " ", "L", "i", "m", "b", "a", "s", "i", "y", "a"].indexOf(letter);
+                  if (el && letterRefs[i] !== el) {
+                    letterRefs[i] = el;
                     setLetterRefs([...letterRefs]);
                   }
                 }}
